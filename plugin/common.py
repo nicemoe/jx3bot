@@ -1,10 +1,11 @@
-import json
+import time
+from copy import copy
 
 from nonebot import get_bot
 from nonebot.log import logger
-from typing import Union
-import random
+import platform
 import httpx
+import json
 
 bot = get_bot()
 config = bot.config
@@ -12,9 +13,9 @@ config = bot.config
 
 class Request:
     def __init__(self):
-        self.headers = {"User-Agent": f"Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_8; en-us) AppleWebKit/534.50 (KHTML, like Gecko) Version/5.1 Safari/534.50/{list(config.SUPERUSERS)[0]}"}
+        self.headers = {"User-Agent": f"NoneBot({list(config.SUPERUSERS)[0]}/{platform.python_version()})"}
 
-    async def post(self, url: str, data: dict = None, headers: dict = None, timeout: int = 10) -> str:
+    async def connect(self, url: str, data: dict = None, headers: dict = None, timeout: int = 10) -> str:
         headers = headers if headers else self.headers
         try:
             async with httpx.AsyncClient() as client:
@@ -23,7 +24,7 @@ class Request:
         except Exception as e:
             logger.error(f"连接网页 {url} 出问题惹！{e}")
 
-    async def get(self, url: str, params: dict = None, headers: dict = None, timeout: int = 10) -> str:
+    async def content(self, url: str, params: dict = None, headers: dict = None, timeout: int = 10) -> str:
         headers = headers if headers else self.headers
         try:
             async with httpx.AsyncClient() as client:
